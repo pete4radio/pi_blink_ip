@@ -51,7 +51,7 @@ if len(sys.argv) == 2:
         print ("blink_ip.py is Already on crontab of root")
         sys.exit()
 
-    cron_lines = cron_lines+'@reboot /root/blink_ip.py\n'
+    cron_lines = cron_lines+'@reboot /root/blink_ip.py > /home/pi/pi_blink_ip_log.txt2>&1\n'
 
     cur_cron = subprocess.run(['crontab','-'], input=cron_lines.encode())
 
@@ -80,9 +80,9 @@ def blink_led(duration):
     ledfile.flush()
     time.sleep(0.2)
 
-ledfile = open ("/sys/class/leds/led0/brightness","w")
+ledfile = open ("/sys/class/leds/ACT/brightness","w")
 on="1";off="0"
-if not os.path.isdir("/sys/class/leds/led1"):
+if not os.path.isdir("/sys/class/leds/PWR"):
     print("Is pi zero"); # Activity LED on pi zero is backwards because it also indicates power.
     on="0";off="1"
 
@@ -125,5 +125,5 @@ for n in range(10):
 ledfile.write("0");
 ledfile.close()
 
-with open ("/sys/class/leds/led0/trigger","w") as trig:
+with open ("/sys/class/leds/ACT/trigger","w") as trig:
     trig.write("mmc0") # Restore act LED to trigger on file access.
